@@ -79,24 +79,29 @@ public class ArraysAndStrings {
       return numDiff;
     }
 
-    private static int removed(String s1, String s2) {
+    private static boolean removed(String s1, String s2) {
+
+        //
         String shorter = s1;
         String longer = s2;
         if (s1.length() > s2.length()) {
             shorter = s2;
             longer = s1;
         }
-        int diff = 0;
+        int i = 0;
         int j = 0;
-        for (int i = 0; i < longer.length(); i++) {
-            if (i > shorter.length() - 1 || shorter.charAt(j) != longer.charAt(i)) {
+        int diff = 0;
+        while (i < shorter.length()  && j < longer.length()) {
+            if (i > shorter.length() - 1 || shorter.charAt(i) != longer.charAt(j)) {
                 diff++;
+                j++;
             } else {
                 j++;
+                i++;
             }
         }
 
-        return diff;
+        return diff == 1;
     }
 
     public static boolean oneAway(String s1, String s2) {
@@ -109,7 +114,7 @@ public class ArraysAndStrings {
         if ( s1.length() == s2.length()) {
             return diff(s1, s2) == 1;
         }
-        return removed(s1, s2) == 1;
+        return removed(s1, s2);
     }
 
     public static String stringCompression(String s) {
@@ -133,11 +138,67 @@ public class ArraysAndStrings {
         return sb.toString();
     }
 
-    public byte[][] rotateInPlace(byte[][] matrix) {
-        return null;
+    public static byte[][] rotateInPlace(byte[][] matrix) {
+
+        int n = matrix[0].length;
+        int start_i = 0;
+        int start_j = 0;
+        int i = 0;
+        int j = 0;
+        while (i < n - start_j - 1) {
+            while (j < n - start_j - 1) {
+                byte p1 = matrix[i][j]; 
+                byte p2 = matrix[n - 1 - j][i];
+                byte p3 = matrix[n - 1 - i][n - 1 - j];
+                byte p4 = matrix[j][n - 1 - i];
+                matrix[n - 1 - j][i] = p1;
+                matrix[n - 1 - i][n - 1 - j] = p2;
+                matrix[j][n - 1 - i] = p3;
+                matrix[i][j] = p4;
+                j++;
+                
+            }
+
+            start_j++;
+            start_i++;
+            i = start_i;
+            j = start_j; 
+        }
+        return matrix;
+    }
+
+    public static double[][] zeroMatrix(double[][] matrix) {
+        int n = matrix[0].length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == 0) {
+                    for (int k = 0; k < n; k++) {
+                        matrix[i][k] = Double.NEGATIVE_INFINITY;
+                        matrix[k][j] = Double.NEGATIVE_INFINITY;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == Double.NEGATIVE_INFINITY) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        return matrix;
+    }
+
+    public static boolean stringRotation(String s1, String s2) {
+        StringBuilder s = new StringBuilder(s2);
+        s.append(s2);
+        return s.toString().contains(s1);
     }
 
     public static void main(String[] args) {
-        System.out.println(stringCompression(args[0]));
+        String s1 = args[0];
+        String s2 = args[1];
+        System.out.println(stringRotation(s1, s2));
     }
 }
